@@ -13,12 +13,17 @@ interface TimerState {
   endTime: Moment;
   currentDisplay: string;
   isRunning: boolean;
+  maxTimeDiff: number;
+  currentTimeDiff: number;
 }
 
 type Callback = () => void;
 
 const formatTimeDiff = (diff: number, format: string) =>
   moment.utc(diff).format(format);
+
+const calculateTimteDiff = (endTime: Moment) =>
+  Math.max(endTime.diff(moment()), 0);
 
 const useTimer = ({
   duration = 15,
@@ -31,12 +36,18 @@ const useTimer = ({
 
   const onTimerEndCallback = useRef(onTimerEnd);
 
-  const [{ isRunning, currentDisplay }, setState] = useState<TimerState>(() => {
+  const [
+    { isRunning, currentDisplay, maxTimeDiff, currentTimeDiff },
+    setState,
+  ] = useState<TimerState>(() => {
     const endTime = moment().add(duration, unit);
+    const maxTimeDiff = calculateTimteDiff(endTime);
     return {
+      maxTimeDiff,
       endTime,
       currentDisplay: formatTimeDiff(endTime.diff(moment()), displayFormat),
       isRunning: false,
+      currentTimeDiff: maxTimeDiff,
     };
   });
 
@@ -69,7 +80,7 @@ const useTimer = ({
             stopTimer();
           }
           const currentDisplay = formatTimeDiff(diff, displayFormat);
-          return { ...state, currentDisplay };
+          return { ...state, currentDisplay, currentTimeDiff: diff };
         });
       });
     }
@@ -86,6 +97,8 @@ const useTimer = ({
     currentDisplay,
     setTimerEndCallback,
     isRunning,
+    maxTimeDiff,
+    currentTimeDiff,
   };
 };
 
