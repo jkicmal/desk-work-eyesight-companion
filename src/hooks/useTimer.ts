@@ -1,104 +1,133 @@
 import moment, { Moment } from "moment";
-import { useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
+
+type TimeUnit = moment.unitOfTime.DurationConstructor;
 
 interface UseTimerOptions {
   duration: number;
-  unit: moment.unitOfTime.DurationConstructor;
-  displayFormat: string;
+  unit: TimeUnit;
   refreshTime: number;
   onTimerEnd: Callback;
 }
 
 interface TimerState {
   endTime: Moment;
-  currentDisplay: string;
   isRunning: boolean;
   maxTimeDiff: number;
   currentTimeDiff: number;
 }
 
+interface UseTimerReturn {
+  currentTimeDiff: number;
+  startTimer: Callback;
+  stopTimer: Callback;
+  setTimerEndCallback: (callback: Callback) => void;
+  isRunning: boolean;
+  maxTimeDiff: number;
+  resetTimer: Callback;
+}
+
 type Callback = () => void;
 
-const formatTimeDiff = (diff: number, format: string) =>
-  moment.utc(diff).format(format);
-
-const calculateTimteDiff = (endTime: Moment) =>
+const calculateTimeDiff = (endTime: Moment) =>
   Math.max(endTime.diff(moment()), 0);
+
+const calculateEndTime = (duration: number, unit: TimeUnit) =>
+  moment().add(duration, unit).add(10, "milliseconds");
 
 const useTimer = ({
   duration = 15,
   unit = "minutes",
-  displayFormat = "MM:ss",
-  refreshTime = 100,
+  refreshTime = 33,
   onTimerEnd = () => {},
-}: Partial<UseTimerOptions>) => {
+}: Partial<UseTimerOptions>): UseTimerReturn => {
   const timerInterval = useRef<NodeJS.Timeout>();
 
   const onTimerEndCallback = useRef(onTimerEnd);
 
-  const [
-    { isRunning, currentDisplay, maxTimeDiff, currentTimeDiff },
-    setState,
-  ] = useState<TimerState>(() => {
-    const endTime = moment().add(duration, unit);
-    const maxTimeDiff = calculateTimteDiff(endTime);
+  const [state, setState] = useState<TimerState>(() => {
+    const endTime = calculateEndTime(duration, unit);
+    const maxTimeDiff = calculateTimeDiff(endTime);
     return {
       maxTimeDiff,
       endTime,
-      currentDisplay: formatTimeDiff(endTime.diff(moment()), displayFormat),
       isRunning: false,
       currentTimeDiff: maxTimeDiff,
     };
   });
 
-  const setEndTime = (endTime: Moment) =>
-    setState((state) => ({ ...state, endTime }));
+  const { isRunning, maxTimeDiff, currentTimeDiff } = state;
 
-  const setIsRunning = (isRunning: boolean) =>
-    setState((state) => ({ ...state, isRunning }));
+  const setTimerEndCallback = useCallback(
+    (callback: Callback) => (onTimerEndCallback.current = callback),
+    []
+  );
 
-  const setTimerInterval = (callback: Callback) => {
-    timerInterval.current = setInterval(callback, refreshTime);
-  };
+  const clearTimerInterval = useCallback(
+    () => timerInterval.current && clearInterval(timerInterval.current),
+    []
+  );
 
-  const setTimerEndCallback = (callback: Callback) =>
-    (onTimerEndCallback.current = callback);
-
-  const clearTimerInterval = () =>
-    timerInterval.current && clearInterval(timerInterval.current);
-
-  const startTimer = () => {
-    if (!isRunning) {
+  const setTimerInterval = useCallback(
+    (callback: Callback) => {
       clearTimerInterval();
-      setEndTime(moment().add(duration, unit));
-      setIsRunning(true);
+      timerInterval.current = setInterval(callback, refreshTime);
+    },
+    [refreshTime, clearTimerInterval]
+  );
+
+  const startTimer = useCallback(() => {
+    if (!isRunning) {
+      setState((state) => ({
+        ...state,
+        endTime: calculateEndTime(duration, unit),
+      }));
       setTimerInterval(() => {
         setState((state) => {
-          const diff = Math.max(state.endTime.diff(moment()), 0);
-          if (diff <= 0) {
+          const diff = calculateTimeDiff(state.endTime);
+          const shouldStop = diff <= 0;
+          if (shouldStop) {
+            clearTimerInterval();
             onTimerEndCallback.current();
-            stopTimer();
           }
-          const currentDisplay = formatTimeDiff(diff, displayFormat);
-          return { ...state, currentDisplay, currentTimeDiff: diff };
+          return { ...state, currentTimeDiff: diff, isRunning: !shouldStop };
         });
       });
     }
-  };
+  }, [isRunning, duration, unit, setTimerInterval, clearTimerInterval]);
 
-  const stopTimer = () => {
-    setIsRunning(false);
+  const stopTimer = useCallback(() => {
     clearTimerInterval();
+    setState((state) => {
+      const endTime = calculateEndTime(duration, unit);
+      return {
+        ...state,
+        isRunning: false,
+        endTime,
+        currentTimeDiff: calculateTimeDiff(endTime),
+      };
+    });
+  }, [duration, unit, clearTimerInterval]);
+
+  const resetTimer = () => {
+    setState((state) => {
+      const endTime = calculateEndTime(duration, unit);
+      return {
+        ...state,
+        endTime,
+        currentTimeDiff: calculateTimeDiff(endTime),
+      };
+    });
   };
 
   return {
+    currentTimeDiff,
     startTimer,
     stopTimer,
-    currentDisplay,
     setTimerEndCallback,
     isRunning,
     maxTimeDiff,
-    currentTimeDiff,
+    resetTimer,
   };
 };
 
