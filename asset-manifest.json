@@ -1,24 +1,24 @@
 {
   "files": {
-    "main.css": "/desk-work-eyesight-companion/static/css/main.a5e1ab92.chunk.css",
-    "main.js": "/desk-work-eyesight-companion/static/js/main.ca75a8df.chunk.js",
-    "main.js.map": "/desk-work-eyesight-companion/static/js/main.ca75a8df.chunk.js.map",
+    "main.css": "/desk-work-eyesight-companion/static/css/main.8d9860c5.chunk.css",
+    "main.js": "/desk-work-eyesight-companion/static/js/main.45cc0f18.chunk.js",
+    "main.js.map": "/desk-work-eyesight-companion/static/js/main.45cc0f18.chunk.js.map",
     "runtime-main.js": "/desk-work-eyesight-companion/static/js/runtime-main.e300fdb4.js",
     "runtime-main.js.map": "/desk-work-eyesight-companion/static/js/runtime-main.e300fdb4.js.map",
-    "static/js/2.2b7d3da2.chunk.js": "/desk-work-eyesight-companion/static/js/2.2b7d3da2.chunk.js",
-    "static/js/2.2b7d3da2.chunk.js.map": "/desk-work-eyesight-companion/static/js/2.2b7d3da2.chunk.js.map",
+    "static/js/2.229c2c43.chunk.js": "/desk-work-eyesight-companion/static/js/2.229c2c43.chunk.js",
+    "static/js/2.229c2c43.chunk.js.map": "/desk-work-eyesight-companion/static/js/2.229c2c43.chunk.js.map",
     "static/js/3.e272a273.chunk.js": "/desk-work-eyesight-companion/static/js/3.e272a273.chunk.js",
     "static/js/3.e272a273.chunk.js.map": "/desk-work-eyesight-companion/static/js/3.e272a273.chunk.js.map",
     "index.html": "/desk-work-eyesight-companion/index.html",
-    "static/css/main.a5e1ab92.chunk.css.map": "/desk-work-eyesight-companion/static/css/main.a5e1ab92.chunk.css.map",
-    "static/js/2.2b7d3da2.chunk.js.LICENSE.txt": "/desk-work-eyesight-companion/static/js/2.2b7d3da2.chunk.js.LICENSE.txt",
+    "static/css/main.8d9860c5.chunk.css.map": "/desk-work-eyesight-companion/static/css/main.8d9860c5.chunk.css.map",
+    "static/js/2.229c2c43.chunk.js.LICENSE.txt": "/desk-work-eyesight-companion/static/js/2.229c2c43.chunk.js.LICENSE.txt",
     "static/js/3.e272a273.chunk.js.LICENSE.txt": "/desk-work-eyesight-companion/static/js/3.e272a273.chunk.js.LICENSE.txt",
     "static/media/pop.55cf888a.mp3": "/desk-work-eyesight-companion/static/media/pop.55cf888a.mp3"
   },
   "entrypoints": [
     "static/js/runtime-main.e300fdb4.js",
-    "static/js/2.2b7d3da2.chunk.js",
-    "static/css/main.a5e1ab92.chunk.css",
-    "static/js/main.ca75a8df.chunk.js"
+    "static/js/2.229c2c43.chunk.js",
+    "static/css/main.8d9860c5.chunk.css",
+    "static/js/main.45cc0f18.chunk.js"
   ]
 }
